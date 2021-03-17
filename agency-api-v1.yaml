@@ -1,0 +1,697 @@
+openapi: 3.0.3
+x-explorer-enabled: false
+x-samples-languages:
+  - curl
+  - node
+  - ruby
+  - javascript
+  - python
+  - go
+  - csharp
+  - java
+info:
+  title: Freede Agency API
+  description: Agency API
+  version: 1.0.0
+servers:
+  - url: 'https://api.testing.freede.co/v1'
+    description: Test Environment
+  - url: 'https://api.staging.freede.co/v1'
+    description: Staging Environment
+  - description: Production Environment
+    url: 'https://api.freede.co/v1'
+paths:
+  /accounts/search:
+    parameters: []
+    post:
+      summary: Search Accounts
+      operationId: post-accounts-search
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+      description: Search accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    ref:
+                      type: string
+            examples:
+              Example:
+                value:
+                  account:
+                    ref: CF-2340
+      tags:
+        - Accounts
+  '/account/{accountRef}':
+    parameters:
+      - schema:
+          type: string
+        name: accountRef
+        in: path
+        required: true
+    get:
+      summary: Get Account
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+      operationId: get-accounts-accountRef
+      description: Get account by Reference
+    put:
+      summary: 'Update Consumer Account. If the account does not exist on Freede yet, it will be added.'
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+      operationId: put-accounts-accountRef
+      description: Update account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+            examples: {}
+  /agency/apikey/rotate:
+    post:
+      summary: Get new API key
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  key:
+                    type: string
+                    minLength: 1
+                    description: API Key
+                required:
+                  - key
+              examples: {}
+        '401':
+          description: Unauthorized
+      operationId: post-agency-apikey-rotate
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: delay
+          description: Delay key expiry by 24hrs
+      description: 'This endpoint allows for the rotation of the agency API key. By default, the API key will immediately be retired but by passing the `delay` parameter, it can be set to remain for 24hrs to allow for a smoother transition between keys.'
+      tags:
+        - Utilities
+  '/consumer/{consumerRef}/optins/{method}/{status}':
+    parameters:
+      - schema:
+          type: string
+          enum:
+            - sms
+            - phone
+            - email
+            - push
+        name: method
+        in: path
+        description: Type of communication channel
+        required: true
+      - schema:
+          type: boolean
+        name: status
+        in: path
+        required: true
+        description: Status of opt-in
+      - schema:
+          type: string
+        name: consumerRef
+        in: path
+        required: true
+    put:
+      summary: Update Opt-in status
+      tags:
+        - Consumers
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+      operationId: put-consumer-consumerId-optin-method-status
+      description: Update opt-in status
+  '/consumer/{consumerRef}/optins':
+    parameters:
+      - schema:
+          type: string
+        name: consumerRef
+        in: path
+        required: true
+    get:
+      summary: Get consumer optins
+      tags:
+        - Consumers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Optins'
+              examples:
+                Example:
+                  value:
+                    sms: true
+                    phone: true
+                    email: true
+                    push: true
+                    default: sms
+        '401':
+          description: Unauthorized
+      operationId: get-consumer-consumerId-optins
+      description: Returns the current status of the consumer opt-ins
+  '/consumer/{consumerRef}':
+    parameters:
+      - schema:
+          type: string
+        name: consumerRef
+        in: path
+        required: true
+    get:
+      summary: Get consumer details
+      tags:
+        - Consumers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consumer'
+              examples: {}
+        '401':
+          description: Unauthorized
+      operationId: get-consumer-consumerId
+      description: Get consumer details
+    delete:
+      summary: Deregister consumer
+      operationId: delete-consumers-consumerId
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      description: Deregister consumer from agency
+      tags:
+        - Consumers
+  /consumers/search:
+    post:
+      summary: Search consumers
+      tags:
+        - Consumers
+      responses:
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Consumer'
+        '401':
+          description: Unauthorized
+      operationId: post-consumers-search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                consumer:
+                  type: object
+                  description: Consumer search object
+                  properties:
+                    ref:
+                      type: string
+                      description: Find consumer based on agency reference number
+      description: Search consumers
+  /health:
+    get:
+      summary: API Health
+      tags:
+        - Utilities
+      responses:
+        '200':
+          description: OK
+      operationId: get-health
+      description: Get API Health
+  '/task/{taskId}':
+    parameters:
+      - schema:
+          type: string
+        name: taskId
+        in: path
+        required: true
+    put:
+      summary: Submit Task Details
+      tags:
+        - Tasks
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+      operationId: put-tasks-taskId
+      description: Update Task Details
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+    delete:
+      summary: Close Task
+      operationId: delete-task-taskId
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+      tags:
+        - Tasks
+  '/account/{accountRef}/files':
+    parameters:
+      - schema:
+          type: string
+        name: accountRef
+        in: path
+        required: true
+    post:
+      summary: Upload file for consumer account
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Freede File Id
+              examples: {}
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+      operationId: post-accounts-accountRef-files
+      description: Upload file for consumer account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Filename to display
+                type:
+                  type: string
+                  description: Type of document sent
+                  example: proof_of_debt
+                description:
+                  type: string
+                  description: Description to show consumer
+                base64:
+                  type: string
+                mime:
+                  type: string
+              required:
+                - name
+                - type
+                - base64
+                - mime
+            examples: {}
+        description: ''
+  '/conversation/{conversationId}':
+    parameters:
+      - schema:
+          type: string
+        name: conversationId
+        in: path
+        required: true
+        description: Conversation Id
+    get:
+      summary: Get Conversation Transcript
+      tags:
+        - Conversations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Communication'
+              examples: {}
+        '401':
+          description: Unauthorized
+        '406':
+          description: Not Acceptable
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  method:
+                    type: string
+                    enum:
+                      - phone
+                      - sms
+                      - chat
+                      - push
+                      - email
+                  data:
+                    type: array
+                    items: {}
+      operationId: get-conversations-conversationId
+      description: ''
+  '/utilities/invites/{code}/qr':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+        description: Invite code
+    get:
+      summary: Generate QR Code for Invite reference code
+      tags:
+        - Utilities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                description: Returns PNG of QR Code
+              examples: {}
+        '401':
+          description: Unauthorized
+      operationId: get-utilities-invite-code-qr
+components:
+  securitySchemes:
+    apikey:
+      name: apikey
+      type: apiKey
+      in: header
+      description: ''
+  schemas:
+    Account:
+      title: Account
+      type: object
+      description: Consumer account
+      x-examples: {}
+      properties:
+        ref:
+          type: string
+        desc:
+          type: string
+        status_reason:
+          type: string
+        status:
+          type: integer
+          minimum: 0
+          maximum: 4
+        balance_current:
+          type: number
+        balance_start:
+          type: number
+        balance_buckets:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              balance_current:
+                type: number
+              balance_start:
+                type: number
+              type:
+                type: string
+                enum:
+                  - principal
+                  - interest
+                  - fees
+                  - other
+        agency:
+          type: object
+          properties:
+            ref:
+              type: string
+            last_payment_amt:
+              type: number
+            last_activity:
+              type: string
+              format: date-time
+            last_payment_date:
+              type: string
+              format: date-time
+        creditor:
+          type: object
+          properties:
+            ref:
+              type: string
+            last_payment_amt:
+              type: number
+            last_activity:
+              type: string
+              format: date-time
+            last_payment_date:
+              type: string
+              format: date-time
+            name:
+              type: string
+        consumers:
+          type: array
+          items:
+            type: object
+            properties:
+              ref:
+                type: string
+    Paging:
+      title: Paging
+      type: object
+      properties:
+        current:
+          type: integer
+        total:
+          type: integer
+      description: Response paging
+    Optin:
+      title: Optin
+      type: object
+      description: Opt-in method details
+      properties:
+        allow:
+          type: boolean
+          description: Consumer has opted into this method
+        default:
+          type: boolean
+          description: Default communication method
+    Consumer:
+      title: Consumer
+      type: object
+      description: Freede Consumer Record
+      x-examples:
+        example-1:
+          _id: string
+          first: string
+          last: string
+          address: string
+          address2: string
+          city: string
+          state: string
+          postal: string
+          email: string
+          phone: string
+          linked: '2019-08-24T14:15:22Z'
+          ref: string
+      properties:
+        first:
+          type: string
+          description: First Name
+        last:
+          type: string
+          description: Last Name
+        address:
+          type: string
+          description: Address Line 1
+        address2:
+          type: string
+          description: Address Line 2
+        city:
+          type: string
+          description: City
+        state:
+          type: string
+          description: State
+        postal:
+          type: string
+          description: Zip/Postal code
+        email:
+          type: string
+          description: Email Address
+        phone:
+          type: string
+          description: Phone Number
+        linked:
+          type: string
+          format: date-time
+          description: Date/time the consumer was linked to the agency
+        ref:
+          type: string
+          description: Agency Consumer Ref
+        optins:
+          $ref: '#/components/schemas/Optins'
+    Optins:
+      title: Optins
+      type: object
+      description: Consumer optins
+      properties:
+        sms:
+          type: boolean
+        phone:
+          type: boolean
+        email:
+          type: boolean
+        push:
+          type: boolean
+        default:
+          type: string
+    Task:
+      title: Task
+      type: object
+      properties:
+        details:
+          oneOf:
+            - $ref: '#/components/schemas/TaskProofOfDebt'
+          description: Details of task
+        type:
+          type: string
+          enum:
+            - proof_of_debt
+          description: Type of task. `proof_of_debt` is the currently accepted task type.
+      required:
+        - details
+        - type
+    TaskProofOfDebt:
+      title: TaskProofOfDebt
+      type: object
+      properties:
+        file:
+          $ref: '#/components/schemas/FileSubmission'
+        notes:
+          type: string
+          description: Any additional notes to display to consumer
+    FileSubmission:
+      description: ''
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - proof_of_debt
+          example: proof_of_debt
+        description:
+          type: string
+        base64:
+          type: string
+        mime:
+          type: string
+          description: ''
+      required:
+        - name
+        - type
+        - base64
+        - mime
+    Communication:
+      title: Communication
+      type: object
+      properties:
+        when:
+          type: string
+          format: date-time
+          description: When the communication happened
+        direction:
+          type: integer
+          minimum: 0
+          maximum: 1
+          exclusiveMinimum: false
+          exclusiveMaximum: false
+          enum:
+            - 0
+            - 1
+          description: 'Direction of communication (0=outgoing,1=incoming)'
+        content:
+          type: string
+          description: Communication content
+        type:
+          type: string
+          enum:
+            - text
+          description: Communication data type
+  responses: {}
+  parameters: {}
+security:
+  - apikey: []
+tags:
+  - name: Accounts
+  - name: Consumers
+  - name: Utilities
+  - name: Tasks
+  - name: Conversations
