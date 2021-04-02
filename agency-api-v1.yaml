@@ -440,6 +440,80 @@ paths:
         '401':
           description: Unauthorized
       operationId: get-utilities-invite-code-qr
+  '/account/{accountRef}/offer/{offerId}':
+    parameters:
+      - schema:
+          type: string
+        name: accountRef
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: offerId
+        in: path
+        required: true
+    put:
+      summary: Respond to settlement offer
+      tags:
+        - Accounts
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: put-account-accountRef-offer-offerId
+      description: Respond to settlement offer that went through manual review
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  description: '0 = declined, 1 = accepted, 2 = counter'
+                  enum:
+                    - 0
+                    - 1
+                    - 2
+                counter:
+                  type: number
+              required:
+                - status
+  '/account/{accountRef}/payments/{paymentId}':
+    parameters:
+      - schema:
+          type: string
+        name: accountRef
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: paymentId
+        in: path
+        required: true
+    post:
+      summary: Update payment status
+      tags:
+        - Payments
+        - Accounts
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: post-account-accountRef-payment-paymentId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  description: '1=pending,2=applied,3=refunded,4=returned,5=canceled'
+              required:
+                - status
 components:
   securitySchemes:
     apikey:
