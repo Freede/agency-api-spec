@@ -454,8 +454,6 @@ paths:
         required: true
     put:
       summary: Respond to settlement offer
-      tags:
-        - Accounts
       responses:
         '200':
           description: OK
@@ -480,6 +478,8 @@ paths:
                   type: number
               required:
                 - status
+      tags:
+        - Offers
   '/account/{accountRef}/payments/{paymentId}':
     parameters:
       - schema:
