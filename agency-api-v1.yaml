@@ -440,46 +440,6 @@ paths:
         '401':
           description: Unauthorized
       operationId: get-utilities-invite-code-qr
-  '/account/{accountRef}/offer/{offerId}':
-    parameters:
-      - schema:
-          type: string
-        name: accountRef
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: offerId
-        in: path
-        required: true
-    put:
-      summary: Respond to settlement offer
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
-      operationId: put-account-accountRef-offer-offerId
-      description: Respond to settlement offer that went through manual review
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                status:
-                  type: integer
-                  description: '0 = declined, 1 = accepted, 2 = counter'
-                  enum:
-                    - 0
-                    - 1
-                    - 2
-                counter:
-                  type: number
-              required:
-                - status
-      tags:
-        - Offers
   '/account/{accountRef}/payments/{paymentId}':
     parameters:
       - schema:
@@ -692,12 +652,13 @@ components:
         details:
           oneOf:
             - $ref: '#/components/schemas/TaskProofOfDebt'
+            - $ref: '#/components/schemas/TaskOffer'
           description: Details of task
         type:
           type: string
           enum:
             - proof_of_debt
-          description: Type of task. `proof_of_debt` is the currently accepted task type.
+          description: Type of task. `proof_of_debt` or `offer`
       required:
         - details
         - type
@@ -759,6 +720,18 @@ components:
           enum:
             - text
           description: Communication data type
+    TaskOffer:
+      title: TaskOffer
+      type: object
+      description: Offer task
+      properties:
+        status:
+          type: integer
+          description: '0 = declined, 1 = accepted, 2 = counter'
+        counter:
+          type: number
+      required:
+        - status
   responses: {}
   parameters: {}
 security:
