@@ -682,7 +682,6 @@ components:
           type: string
           enum:
             - proof_of_debt
-          example: proof_of_debt
         description:
           type: string
         base64:
