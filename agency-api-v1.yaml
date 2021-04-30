@@ -556,6 +556,13 @@ components:
             properties:
               ref:
                 type: string
+        type:
+          type: string
+          enum:
+            - medical
+            - student
+        interest_bearing:
+          type: boolean
     Paging:
       title: Paging
       type: object
@@ -663,6 +670,17 @@ components:
       required:
         - details
         - type
+      x-examples:
+        example-1:
+          details:
+            file:
+              name: string
+              type: proof_of_debt
+              description: string
+              base64: string
+              mime: string
+            notes: string
+          type: proof_of_debt
     TaskProofOfDebt:
       title: TaskProofOfDebt
       type: object
