@@ -500,7 +500,7 @@ paths:
                 method:
                   type: string
                 type:
-                  type: string
+                  type: integer
 components:
   securitySchemes:
     apikey:
