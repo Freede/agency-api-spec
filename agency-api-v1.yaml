@@ -452,7 +452,7 @@ paths:
         name: paymentId
         in: path
         required: true
-    post:
+    put:
       summary: Update payment status
       tags:
         - Payments
