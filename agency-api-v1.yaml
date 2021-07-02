@@ -474,33 +474,6 @@ paths:
                   description: '1=pending,2=applied,3=refunded,4=returned,5=canceled'
               required:
                 - status
-  /intent/communication:
-    post:
-      summary: Agency confirmation of intent to communicate with consumer
-      tags: []
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
-      operationId: post-intent-communication
-      description: ''
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: string
-                  description: Intent ID
-                consumer_ref:
-                  type: string
-                  description: Consumer Reference
-                method:
-                  type: string
-                type:
-                  type: integer
 components:
   securitySchemes:
     apikey:
