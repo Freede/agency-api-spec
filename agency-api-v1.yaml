@@ -651,8 +651,6 @@ components:
           type: boolean
         push:
           type: boolean
-        default:
-          type: string
     Task:
       title: Task
       type: object
