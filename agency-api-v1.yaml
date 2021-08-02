@@ -651,6 +651,8 @@ components:
           type: boolean
         push:
           type: boolean
+        esign:
+          type: boolean
     Task:
       title: Task
       type: object
@@ -710,6 +712,7 @@ components:
         - type
         - base64
         - mime
+      x-examples: {}
     Communication:
       title: Communication
       type: object
