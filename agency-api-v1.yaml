@@ -86,7 +86,7 @@ paths:
       operationId: get-accounts-accountRef
       description: Get account by Reference
     put:
-      summary: 'Update Consumer Account. If the account does not exist on Freede yet, it will be added.'
+      summary: Update Consumer Account
       tags:
         - Accounts
       responses:
@@ -97,7 +97,7 @@ paths:
         '406':
           description: Not Acceptable
       operationId: put-accounts-accountRef
-      description: Update account
+      description: 'Update account. If the account does not exist on Freede yet, it will be added.'
       requestBody:
         content:
           application/json:
