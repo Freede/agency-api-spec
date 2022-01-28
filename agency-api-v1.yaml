@@ -144,6 +144,7 @@ paths:
             - phone
             - email
             - push
+            - esign
         name: method
         in: path
         description: Type of communication channel
@@ -653,6 +654,14 @@ components:
           type: boolean
         esign:
           type: boolean
+        default:
+          type: string
+          enum:
+            - sms
+            - phone
+            - email
+            - push
+          description: Default communication channel
     Task:
       title: Task
       type: object
