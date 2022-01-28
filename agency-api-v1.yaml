@@ -198,6 +198,7 @@ paths:
                     phone: true
                     email: true
                     push: true
+                    esign: true
                     default: sms
         '401':
           description: Unauthorized
