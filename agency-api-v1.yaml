@@ -307,6 +307,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Task'
+            examples:
+              example-1:
+                value:
+                  details:
+                    file:
+                      name: string
+                      type: proof_of_debt
+                      description: string
+                      base64: string
+                      mime: string
+                    notes: string
+                  type: proof_of_debt
     delete:
       summary: Close Task
       operationId: delete-task-taskId
@@ -666,20 +678,6 @@ components:
     Task:
       title: Task
       type: object
-      properties:
-        details:
-          oneOf:
-            - $ref: '#/components/schemas/TaskProofOfDebt'
-            - $ref: '#/components/schemas/TaskOffer'
-          description: Details of task
-        type:
-          type: string
-          enum:
-            - proof_of_debt
-          description: Type of task. `proof_of_debt` or `offer`
-      required:
-        - details
-        - type
       x-examples:
         example-1:
           details:
@@ -691,6 +689,21 @@ components:
               mime: string
             notes: string
           type: proof_of_debt
+      properties:
+        details:
+          oneOf:
+            - $ref: '#/components/schemas/TaskProofOfDebt'
+            - $ref: '#/components/schemas/TaskOffer'
+          description: Details of task
+        type:
+          type: string
+          enum:
+            - proof_of_debt
+            - offer
+          description: Type of task. `proof_of_debt` or `offer`
+      required:
+        - details
+        - type
     TaskProofOfDebt:
       title: TaskProofOfDebt
       type: object
