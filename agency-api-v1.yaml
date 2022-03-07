@@ -222,7 +222,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Consumer'
-              examples: {}
+              examples:
+                example-1:
+                  value:
+                    first: string
+                    last: string
+                    address: string
+                    address2: string
+                    city: string
+                    state: string
+                    zip: string
+                    email: string
+                    phone: string
+                    linked: '2019-08-24T14:15:22Z'
+                    ref: string
+                    optins:
+                      sms: true
+                      phone: true
+                      email: true
+                      push: true
+                      esign: true
+                      default: email
         '401':
           description: Unauthorized
       operationId: get-consumer-consumerId
@@ -238,6 +258,80 @@ paths:
       description: Deregister consumer from agency
       tags:
         - Consumers
+    put:
+      summary: Update Consumer Information
+      operationId: put-consumer-consumerRef
+      responses:
+        '200':
+          description: OK
+      description: Allows the agency to update the consumer information
+      tags:
+        - Consumers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              x-examples:
+                example-1:
+                  first: string
+                  last: string
+                  address: string
+                  address2: string
+                  city: string
+                  state: string
+                  zip: string
+                  email: string
+                  phone: string
+              properties:
+                first:
+                  type: string
+                  minLength: 1
+                last:
+                  type: string
+                  minLength: 1
+                address:
+                  type: string
+                  minLength: 1
+                address2:
+                  type: string
+                  minLength: 1
+                city:
+                  type: string
+                  minLength: 1
+                state:
+                  type: string
+                  minLength: 2
+                  maxLength: 2
+                  example: TX
+                zip:
+                  type: string
+                  minLength: 1
+                email:
+                  type: string
+                  minLength: 1
+                phone:
+                  type: string
+                  minLength: 11
+                  maxLength: 11
+                  example: '12105555555'
+            examples:
+              example-1:
+                value:
+                  first: string
+                  last: string
+                  address: string
+                  address2: string
+                  city: string
+                  state: TX
+                  zip: string
+                  email: string
+                  phone: '12105555555'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
   /consumers/search:
     post:
       summary: Search consumers
@@ -610,7 +704,7 @@ components:
           address2: string
           city: string
           state: string
-          postal: string
+          zip: string
           email: string
           phone: string
           linked: '2019-08-24T14:15:22Z'
@@ -634,7 +728,7 @@ components:
         state:
           type: string
           description: State
-        postal:
+        zip:
           type: string
           description: Zip/Postal code
         email:
@@ -652,6 +746,19 @@ components:
           description: Agency Consumer Ref
         optins:
           $ref: '#/components/schemas/Optins'
+      required:
+        - first
+        - last
+        - address
+        - address2
+        - city
+        - state
+        - zip
+        - email
+        - phone
+        - linked
+        - ref
+        - optins
     Optins:
       title: Optins
       type: object
@@ -674,7 +781,7 @@ components:
             - phone
             - email
             - push
-          description: Default communication channel
+          description: Default communication channel. Currently always email.
     Task:
       title: Task
       type: object
