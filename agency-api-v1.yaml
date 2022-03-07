@@ -264,7 +264,9 @@ paths:
       responses:
         '200':
           description: OK
-      description: Allows the agency to update the consumer information
+      description: |-
+        Allows the agency to update the consumer information.
+        Pushing a new number to Freede confirms the consumer's express consent to received text messages under TCPA and will re-enable the consumer optin if disabled.
       tags:
         - Consumers
       requestBody:
@@ -308,9 +310,6 @@ paths:
                 zip:
                   type: string
                   minLength: 1
-                email:
-                  type: string
-                  minLength: 1
                 phone:
                   type: string
                   minLength: 11
@@ -326,7 +325,6 @@ paths:
                   city: string
                   state: TX
                   zip: string
-                  email: string
                   phone: '12105555555'
           application/xml:
             schema:
