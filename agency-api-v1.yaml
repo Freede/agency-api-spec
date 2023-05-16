@@ -40,8 +40,6 @@ paths:
                       $ref: '#/components/schemas/Account'
         '401':
           description: Unauthorized
-        '406':
-          description: Not Acceptable
       description: Search accounts
       requestBody:
         content:
@@ -79,8 +77,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
-        '204':
-          description: No Content
         '401':
           description: Unauthorized
       operationId: get-accounts-accountRef
@@ -169,8 +165,6 @@ paths:
           description: OK
         '401':
           description: Unauthorized
-        '406':
-          description: Not Acceptable
       operationId: put-consumer-consumerId-optin-method-status
       description: Update opt-in status
   '/consumer/{consumerRef}/optins':
@@ -372,6 +366,8 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          description: Unauthorized
       operationId: get-health
       description: Get API Health
   '/task/{taskId}':
@@ -390,8 +386,6 @@ paths:
           description: OK
         '401':
           description: Unauthorized
-        '406':
-          description: Not Acceptable
       operationId: put-tasks-taskId
       description: Update Task Details
       requestBody:
@@ -448,8 +442,6 @@ paths:
               examples: {}
         '401':
           description: Unauthorized
-        '406':
-          description: Not Acceptable
       operationId: post-accounts-accountRef-files
       description: Upload file for consumer account
       requestBody:
@@ -503,24 +495,6 @@ paths:
               examples: {}
         '401':
           description: Unauthorized
-        '406':
-          description: Not Acceptable
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  method:
-                    type: string
-                    enum:
-                      - phone
-                      - sms
-                      - chat
-                      - push
-                      - email
-                  data:
-                    type: array
-                    items: {}
       operationId: get-conversations-conversationId
       description: ''
   '/utilities/invites/{code}/qr':
