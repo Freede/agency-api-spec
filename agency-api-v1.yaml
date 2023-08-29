@@ -59,6 +59,60 @@ paths:
                     ref: CF-2340
       tags:
         - Accounts
+      security:
+        - apikey: []
+  '/account/{accountRef}/payments':
+    parameters:
+      - schema:
+          type: string
+        name: accountRef
+        in: path
+        required: true
+    post:
+      summary: Add Account Payment
+      operationId: add-account-payment
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Returned Freede Payment ID
+        '401':
+          description: Unauthorized
+      description: Add an account payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPaymentRequest'
+            examples:
+              Example:
+                value:
+                  account:
+                    ref: CF-2340
+      tags:
+        - Accounts
+      security:
+        - apikey: []
+    get:
+      summary: Get Account Payments
+      operationId: get-account-accountRef-payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
+        '401':
+          description: Unauthorized
   '/account/{accountRef}':
     parameters:
       - schema:
@@ -81,6 +135,8 @@ paths:
           description: Unauthorized
       operationId: get-accounts-accountRef
       description: Get account by Reference
+      security:
+        - apikey: []
     put:
       summary: Update Consumer Account
       tags:
@@ -100,6 +156,8 @@ paths:
             schema:
               $ref: '#/components/schemas/Account'
             examples: {}
+      security:
+        - apikey: []
   /agency/apikey/rotate:
     post:
       summary: Get new API key
@@ -131,6 +189,8 @@ paths:
       description: 'This endpoint allows for the rotation of the agency API key. By default, the API key will immediately be retired but by passing the `delay` parameter, it can be set to remain for 24hrs to allow for a smoother transition between keys.'
       tags:
         - Utilities
+      security:
+        - apikey: []
   '/consumer/{consumerRef}/optins/{method}/{status}':
     parameters:
       - schema:
@@ -167,6 +227,8 @@ paths:
           description: Unauthorized
       operationId: put-consumer-consumerId-optin-method-status
       description: Update opt-in status
+      security:
+        - apikey: []
   '/consumer/{consumerRef}/optins':
     parameters:
       - schema:
@@ -198,6 +260,56 @@ paths:
           description: Unauthorized
       operationId: get-consumer-consumerId-optins
       description: Returns the current status of the consumer opt-ins
+      security:
+        - apikey: []
+  '/consumer/{consumerRef}/payments':
+    parameters:
+      - schema:
+          type: string
+        name: consumerRef
+        in: path
+        required: true
+    get:
+      summary: Get consumer payments
+      tags:
+        - Consumers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumerPayment'
+              examples:
+                Example:
+                  value:
+                    sms: true
+                    phone: true
+                    email: true
+                    push: true
+                    esign: true
+                    default: sms
+        '401':
+          description: Unauthorized
+      operationId: get-consumer-payments
+      description: Returns consumer payments on file with Freede
+      security:
+        - apikey: []
+    post:
+      summary: Add Consumer Payment
+      operationId: post-consumer-consumerRef-payments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerPaymentRequest'
+        '401':
+          description: Unauthorized
+      description: Add a historical consumer payment record
   '/consumer/{consumerRef}':
     parameters:
       - schema:
@@ -241,6 +353,8 @@ paths:
           description: Unauthorized
       operationId: get-consumer-consumerId
       description: Get consumer details
+      security:
+        - apikey: []
     delete:
       summary: Deregister consumer
       operationId: delete-consumers-consumerId
@@ -252,6 +366,8 @@ paths:
       description: Deregister consumer from agency
       tags:
         - Consumers
+      security:
+        - apikey: []
     put:
       summary: Update Consumer Information
       operationId: put-consumer-consumerRef
@@ -324,6 +440,8 @@ paths:
             schema:
               type: object
               properties: {}
+      security:
+        - apikey: []
   /consumers/search:
     post:
       summary: Search consumers
@@ -358,6 +476,8 @@ paths:
                       type: string
                       description: Find consumer based on agency reference number
       description: Search consumers
+      security:
+        - apikey: []
   /health:
     get:
       summary: API Health
@@ -405,6 +525,8 @@ paths:
                       mime: string
                     notes: string
                   type: proof_of_debt
+      security:
+        - apikey: []
     delete:
       summary: Close Task
       operationId: delete-task-taskId
@@ -417,6 +539,8 @@ paths:
           description: Not Acceptable
       tags:
         - Tasks
+      security:
+        - apikey: []
   '/account/{accountRef}/files':
     parameters:
       - schema:
@@ -471,6 +595,8 @@ paths:
                 - mime
             examples: {}
         description: ''
+      security:
+        - apikey: []
   '/conversation/{conversationId}':
     parameters:
       - schema:
@@ -497,6 +623,9 @@ paths:
           description: Unauthorized
       operationId: get-conversations-conversationId
       description: ''
+      parameters: []
+      security:
+        - apikey: []
   '/utilities/invites/{code}/qr':
     parameters:
       - schema:
@@ -520,6 +649,8 @@ paths:
         '401':
           description: Unauthorized
       operationId: get-utilities-invite-code-qr
+      security:
+        - apikey: []
   '/account/{accountRef}/payments/{paymentId}':
     parameters:
       - schema:
@@ -554,6 +685,8 @@ paths:
                   description: '1=pending,2=applied,3=refunded,4=returned,5=canceled'
               required:
                 - status
+      security:
+        - apikey: []
 components:
   securitySchemes:
     apikey:
@@ -852,6 +985,196 @@ components:
         counter:
           type: number
       required:
+        - status
+    ConsumerPayment:
+      type: object
+      x-examples:
+        Example 1:
+          id: string
+          amount: 0
+          when: '2019-08-24T14:15:22Z'
+          consumer_ref: string
+          method: bank
+          status: 0
+          scheduled: '2019-08-24T14:15:22Z'
+      x-stoplight:
+        id: 2e0f42d6218f3
+      properties:
+        id:
+          type: string
+        ref_id:
+          type: string
+          description: Agency Payment ID
+        amount:
+          type: integer
+        when:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+        account_num:
+          type: string
+        method:
+          type: string
+          enum:
+            - bank
+            - card
+        status:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          description: '0=scheduled,1=pending,2=applied,3=refunded,4=returned,5=canceled'
+        scheduled:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+      required:
+        - amount
+        - when
+        - method
+        - status
+    Payment:
+      type: object
+      x-examples:
+        Example 1:
+          id: string
+          amount: 0
+          when: '2019-08-24T14:15:22Z'
+          consumer_ref: string
+          method: bank
+          status: 0
+          scheduled: '2019-08-24T14:15:22Z'
+      properties:
+        id:
+          type: string
+        ref_id:
+          type: string
+          description: Agency Payment ID
+        amount:
+          type: integer
+        when:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+        consumer_ref:
+          type: string
+        method:
+          type: string
+          enum:
+            - bank
+            - card
+        status:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          description: '0=scheduled,1=pending,2=applied,3=refunded,4=returned,5=canceled'
+        scheduled:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+      required:
+        - id
+        - amount
+        - when
+        - consumer_ref
+        - method
+        - status
+    ConsumerPaymentRequest:
+      type: object
+      x-examples:
+        Example 1:
+          id: string
+          amount: 0
+          when: '2019-08-24T14:15:22Z'
+          consumer_ref: string
+          method: bank
+          status: 0
+          scheduled: '2019-08-24T14:15:22Z'
+      properties:
+        ref_id:
+          type: string
+        amount:
+          type: integer
+        when:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+        account_num:
+          type: string
+        method:
+          type: string
+        status:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+        scheduled:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+      required:
+        - ref_id
+        - amount
+        - when
+        - method
+        - status
+    AccountPaymentRequest:
+      type: object
+      x-examples:
+        Example 1:
+          id: string
+          amount: 0
+          when: '2019-08-24T14:15:22Z'
+          consumer_ref: string
+          method: bank
+          status: 0
+          scheduled: '2019-08-24T14:15:22Z'
+      x-stoplight:
+        id: c976bd8095e59
+      properties:
+        ref_id:
+          type: string
+        amount:
+          type: integer
+        when:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+        consumer_ref:
+          type: string
+        method:
+          type: string
+        status:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+        scheduled:
+          type: string
+          format: date-time
+          example: '2019-08-24T14:15:22Z'
+      required:
+        - ref_id
+        - amount
+        - when
+        - method
         - status
   responses: {}
   parameters: {}
