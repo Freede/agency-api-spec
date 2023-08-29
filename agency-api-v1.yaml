@@ -113,6 +113,8 @@ paths:
                   $ref: '#/components/schemas/Payment'
         '401':
           description: Unauthorized
+      tags:
+        - Accounts
   '/account/{accountRef}':
     parameters:
       - schema:
@@ -310,6 +312,8 @@ paths:
         '401':
           description: Unauthorized
       description: Add a historical consumer payment record
+      tags:
+        - Consumers
   '/consumer/{consumerRef}':
     parameters:
       - schema:
