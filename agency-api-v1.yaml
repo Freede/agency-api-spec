@@ -780,6 +780,10 @@ components:
             - student
         interest_bearing:
           type: boolean
+        convenience_fee:
+          type: number
+          x-stoplight:
+            id: mcoyppwxy59sp
     Paging:
       title: Paging
       type: object
