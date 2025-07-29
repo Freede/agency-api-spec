@@ -74,14 +74,7 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: Returned Freede Payment ID
+          content: {}
         '401':
           description: Unauthorized
       description: Add an account payment
@@ -89,7 +82,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AccountPaymentRequest'
+              $ref: '#/components/schemas/Payment'
             examples:
               Example:
                 value:
@@ -108,9 +101,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Payment'
+                $ref: '#/components/schemas/Payment'
         '401':
           description: Unauthorized
       tags:
@@ -264,56 +255,6 @@ paths:
       description: Returns the current status of the consumer opt-ins
       security:
         - apikey: []
-  '/consumer/{consumerRef}/payments':
-    parameters:
-      - schema:
-          type: string
-        name: consumerRef
-        in: path
-        required: true
-    get:
-      summary: Get consumer payments
-      tags:
-        - Consumers
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ConsumerPayment'
-              examples:
-                Example:
-                  value:
-                    sms: true
-                    phone: true
-                    email: true
-                    push: true
-                    esign: true
-                    default: sms
-        '401':
-          description: Unauthorized
-      operationId: get-consumer-payments
-      description: Returns consumer payments on file with Freede
-      security:
-        - apikey: []
-    post:
-      summary: Add Consumer Payment
-      operationId: post-consumer-consumerRef-payments
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConsumerPaymentRequest'
-        '401':
-          description: Unauthorized
-      description: Add a historical consumer payment record
-      tags:
-        - Consumers
   '/consumer/{consumerRef}':
     parameters:
       - schema:
@@ -994,196 +935,38 @@ components:
           type: number
       required:
         - status
-    ConsumerPayment:
-      type: object
-      x-examples:
-        Example 1:
-          id: string
-          amount: 0
-          when: '2019-08-24T14:15:22Z'
-          consumer_ref: string
-          method: bank
-          status: 0
-          scheduled: '2019-08-24T14:15:22Z'
-      x-stoplight:
-        id: 2e0f42d6218f3
-      properties:
-        id:
-          type: string
-        ref_id:
-          type: string
-          description: Agency Payment ID
-        amount:
-          type: integer
-        when:
-          type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-        account_num:
-          type: string
-        method:
-          type: string
-          enum:
-            - bank
-            - card
-        status:
-          type: integer
-          enum:
-            - 0
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-          description: '0=scheduled,1=pending,2=applied,3=refunded,4=returned,5=canceled'
-        scheduled:
-          type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-      required:
-        - amount
-        - when
-        - method
-        - status
     Payment:
       type: object
-      x-examples:
-        Example 1:
-          id: string
-          amount: 0
-          when: '2019-08-24T14:15:22Z'
-          consumer_ref: string
-          method: bank
-          status: 0
-          scheduled: '2019-08-24T14:15:22Z'
       properties:
         id:
           type: string
         ref_id:
           type: string
-          description: Agency Payment ID
         amount:
           type: integer
         when:
           type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
         consumer_ref:
           type: string
-        method:
+        method_desc:
           type: string
-          enum:
-            - bank
-            - card
         status:
           type: integer
-          enum:
-            - 0
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-          description: '0=scheduled,1=pending,2=applied,3=refunded,4=returned,5=canceled'
         scheduled:
           type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-      required:
-        - id
-        - amount
-        - when
-        - consumer_ref
-        - method
-        - status
-    ConsumerPaymentRequest:
-      type: object
+        plan_id:
+          type: string
       x-examples:
         Example 1:
           id: string
+          ref_id: string
           amount: 0
           when: '2019-08-24T14:15:22Z'
           consumer_ref: string
-          method: bank
+          method_desc: bank
           status: 0
           scheduled: '2019-08-24T14:15:22Z'
-      properties:
-        ref_id:
-          type: string
-        amount:
-          type: integer
-        when:
-          type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-        account_num:
-          type: string
-        method:
-          type: string
-        status:
-          type: integer
-          enum:
-            - 0
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-        scheduled:
-          type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-      required:
-        - ref_id
-        - amount
-        - when
-        - method
-        - status
-    AccountPaymentRequest:
-      type: object
-      x-examples:
-        Example 1:
-          id: string
-          amount: 0
-          when: '2019-08-24T14:15:22Z'
-          consumer_ref: string
-          method: bank
-          status: 0
-          scheduled: '2019-08-24T14:15:22Z'
-      x-stoplight:
-        id: c976bd8095e59
-      properties:
-        ref_id:
-          type: string
-        amount:
-          type: integer
-        when:
-          type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-        consumer_ref:
-          type: string
-        method:
-          type: string
-        status:
-          type: integer
-          enum:
-            - 0
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-        scheduled:
-          type: string
-          format: date-time
-          example: '2019-08-24T14:15:22Z'
-      required:
-        - ref_id
-        - amount
-        - when
-        - method
-        - status
+          plan_id: string
   responses: {}
   parameters: {}
 security:
