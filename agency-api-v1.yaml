@@ -101,9 +101,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Payment'
-        '401':
-          description: Unauthorized
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
       tags:
         - Accounts
   '/account/{accountRef}':
